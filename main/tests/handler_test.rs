@@ -2,22 +2,16 @@ use axum::{
     Router,
     body::{Body, to_bytes},
     http::{Request, StatusCode},
-    response::{Html, Response},
+    response::Response,
     routing::{get, post},
 };
 use tower::ServiceExt; // for `oneshot`
 
-async fn handler() -> Html<&'static str> {
-    Html("Hello, World!")
-}
-
-async fn submit_handler() -> Html<&'static str> {
-    Html("Form submitted successfully!")
-}
+use main::handlers;
 
 #[tokio::test]
 async fn test_handler_returns_hello_world() {
-    let app = Router::new().route("/", get(handler));
+    let app = Router::new().route("/", get(handlers::handler));
 
     let response: Response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -32,7 +26,7 @@ async fn test_handler_returns_hello_world() {
 
 #[tokio::test]
 async fn test_handler_returns_submit() {
-    let app = Router::new().route("/submit", post(submit_handler));
+    let app = Router::new().route("/submit", post(handlers::submit_handler));
 
     let response: Response = app
         .oneshot(
