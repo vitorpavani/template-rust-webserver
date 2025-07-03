@@ -1,9 +1,15 @@
-use axum::{Router, response::Html, routing::get};
+use axum::{
+    Router,
+    response::Html,
+    routing::{get, post},
+};
 
 #[tokio::main]
 async fn main() {
     // build our application with a route
-    let app = Router::new().route("/", get(handler));
+    let app = Router::new()
+        .route("/", get(handler))
+        .route("/submit", post(submit_handler));
 
     // run it
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
@@ -15,4 +21,8 @@ async fn main() {
 
 async fn handler() -> Html<&'static str> {
     Html("Hello, World!")
+}
+
+async fn submit_handler() -> Html<&'static str> {
+    Html("Form submitted successfully!")
 }
